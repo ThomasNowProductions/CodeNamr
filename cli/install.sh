@@ -16,8 +16,8 @@ fi
 
 echo "Rust is installed. Proceeding with build."
 
-# Navigate to the codenamr-cli directory
-cd codenamr-cli
+# Navigate to the cli directory
+cd cli
 
 # Build the CLI in release mode
 echo "Building CodeNamr CLI in release mode..."
