@@ -1,0 +1,19 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Cargo
+Cargo.lock # Usually committed for applications, but ignored for libraries
+
+# VS Code
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+
+# Environment variables
+.env
+
+# Generated CLI binary (if created at root of codenamr-cli)
+codenamr-cli/target/
+codenamr-cli/codenamr-cli
