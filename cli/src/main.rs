@@ -1,5 +1,5 @@
 use clap::{Parser, ValueEnum};
-use rand::seq::SliceRandom;
+use fastrand;
 use std::fmt;
 
 #[derive(Parser, Debug)]
