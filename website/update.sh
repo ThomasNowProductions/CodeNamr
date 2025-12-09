@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+echo "Starting CodeNamr CLI update..."
+
+# Create a temporary directory for cloning
+TEMP_DIR=$(mktemp -d)
+cd "$TEMP_DIR"
+
+# Clone the repository
+echo "Cloning CodeNamr repository..."
+git clone https://github.com/ThomasNowProductions/CodeNamr.git
+
+# Navigate to the CLI directory
+cd CodeNamr/cli
+
+# Pull the latest changes from the git repository
+echo "Pulling latest changes from git..."
+git pull
+
+# Build the CLI in release mode
+echo "Building CodeNamr CLI in release mode..."
+cargo build --release
+
+# Move the executable to /usr/local/bin
+echo "Installing updated codenamr to /usr/local/bin..."
+sudo mv target/release/codenamr-cli /usr/local/bin/codenamr
+
+# Clean up temporary directory
+cd /
+rm -rf "$TEMP_DIR"
+
+echo "CodeNamr CLI updated successfully!"
