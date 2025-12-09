@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codename Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: white;
+            color: black;
+        }
+        .card {
+            text-align: center;
+            width: 400px;
+            height: 500px;
+            padding: 40px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .codename {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            background-color: black;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: black;
+                color: white;
+            }
+            .card {
+                background-color: black;
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            }
+            button {
+                background-color: white;
+                color: black;
+            }
+            button:hover {
+                background-color: #ccc;
+            }
+        }
+        @media (max-width: 600px) {
+            .card {
+                width: 90%;
+                height: auto;
+            }
+            .codename {
+                font-size: 1.5em;
+            }
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div id="codename" class="codename"></div>
+        <div class="buttons">
+            <button id="copyNormal">Copy as verb noun</button>
+            <button id="copyDash">Copy as verb-noun</button>
+            <button id="copyUpper">Copy as VERB_NOUN</button>
+            <button id="copyLower">Copy as verb_noun</button>
+            <button id="copyCamel">Copy as verbNoun</button>
+            <button id="copyPascal">Copy as VerbNoun</button>
+        </div>
+    </div>
+    <script>
+        const verbs = ['searching', 'talking', 'walking', 'eating', 'running', 'sleeping', 'dancing', 'reading', 'writing', 'swimming', 'jumping', 'singing', 'cooking', 'driving', 'painting', 'playing', 'watching', 'listening', 'thinking', 'building', 'flying', 'laughing', 'crying', 'hugging', 'kissing', 'fighting', 'winning', 'losing', 'growing', 'shrinking', 'breathing', 'climbing', 'drawing', 'exploring', 'fishing', 'gardening', 'hiking', 'inventing', 'jogging', 'knitting', 'learning', 'meditating', 'navigating', 'observing', 'photographing', 'questioning', 'racing', 'sailing', 'teaching', 'understanding', 'vacationing', 'whispering', 'x-raying', 'yawning', 'zooming', 'admiring', 'baking', 'chasing', 'dreaming', 'enjoying', 'forgiving', 'gathering', 'hoping', 'ignoring', 'joking', 'kicking', 'loving', 'moving', 'noticing', 'opening', 'praying', 'quitting', 'resting', 'smiling', 'traveling', 'unlocking', 'viewing', 'waving', 'xylophoning', 'yearning', 'zipping', 'acting', 'bathing', 'cleaning', 'digging', 'editing', 'feeding', 'grilling', 'hunting', 'investing', 'juggling', 'kissing', 'lifting', 'mixing', 'napping', 'organizing', 'picking', 'quarreling', 'riding', 'shopping', 'typing', 'unwinding', 'visiting', 'washing', 'xeroing', 'yodeling', 'zapping'];
+        const nouns = ['laptop', 'bathroom', 'window', 'banana', 'phone', 'kitchen', 'book', 'car', 'tree', 'mirror', 'house', 'door', 'table', 'chair', 'computer', 'garden', 'river', 'mountain', 'city', 'street', 'beach', 'ocean', 'forest', 'desert', 'bridge', 'tower', 'castle', 'ship', 'plane', 'train', 'apple', 'bicycle', 'cloud', 'doorway', 'elephant', 'flower', 'guitar', 'hat', 'island', 'jacket', 'kite', 'lamp', 'moon', 'notebook', 'ocean', 'piano', 'quilt', 'rose', 'sun', 'turtle', 'umbrella', 'violin', 'whale', 'xylophone', 'yacht', 'zebra', 'airplane', 'balloon', 'camera', 'diamond', 'engine', 'fountain', 'globe', 'helmet', 'iceberg', 'jungle', 'key', 'lantern', 'museum', 'nest', 'orchard', 'pyramid', 'quarry', 'rainbow', 'statue', 'temple', 'universe', 'volcano', 'waterfall', 'xerox', 'yogurt', 'zoo', 'anchor', 'butterfly', 'candle', 'drum', 'envelope', 'feather', 'glove', 'honey', 'ink', 'jewel', 'kettle', 'leaf', 'map', 'needle', 'owl', 'pearl', 'queen', 'ring', 'sword', 'throne', 'unicorn', 'vase', 'wagon', 'x-ray', 'yarn', 'zodiac'];
+
+        let currentCodename = '';
+
+        function generateCodename() {
+            const verb = verbs[Math.floor(Math.random() * verbs.length)];
+            const noun = nouns[Math.floor(Math.random() * nouns.length)];
+            return verb + ' ' + noun;
+        }
+
+        function copyToClipboard(text, button) {
+            const originalText = button.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        currentCodename = generateCodename();
+        document.getElementById('codename').textContent = currentCodename;
+
+        document.getElementById('copyNormal').addEventListener('click', function() { copyToClipboard(currentCodename, this); });
+        document.getElementById('copyDash').addEventListener('click', function() { copyToClipboard(currentCodename.replace(' ', '-'), this); });
+        document.getElementById('copyUpper').addEventListener('click', function() { copyToClipboard(currentCodename.toUpperCase().replace(' ', '_'), this); });
+        document.getElementById('copyLower').addEventListener('click', function() { copyToClipboard(currentCodename.replace(' ', '_'), this); });
+        document.getElementById('copyCamel').addEventListener('click', function() { copyToClipboard(currentCodename.split(' ')[0] + currentCodename.split(' ')[1].charAt(0).toUpperCase() + currentCodename.split(' ')[1].slice(1), this); });
+        document.getElementById('copyPascal').addEventListener('click', function() { copyToClipboard(currentCodename.split(' ')[0].charAt(0).toUpperCase() + currentCodename.split(' ')[0].slice(1) + currentCodename.split(' ')[1].charAt(0).toUpperCase() + currentCodename.split(' ')[1].slice(1), this); });
+    </script>
+</body>
+</html>
