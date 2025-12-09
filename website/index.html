@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeNamr</title>
+    <title>CodeNamr CLI Installation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,8 +17,7 @@
         }
         .card {
             text-align: center;
-            width: 400px;
-            height: 500px;
+            width: 600px;
             padding: 40px;
             background-color: white;
             border-radius: 10px;
@@ -27,15 +26,27 @@
             flex-direction: column;
             justify-content: center;
         }
-        .codename {
+        h1 {
             font-size: 2em;
             font-weight: bold;
             margin: 20px 0;
         }
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        h2 {
+            font-size: 1.5em;
+            margin: 20px 0 10px 0;
+        }
+        p {
+            margin: 10px 0;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: left;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', monospace;
         }
         button {
             padding: 12px 20px;
@@ -46,6 +57,7 @@
             background-color: black;
             color: white;
             transition: background-color 0.3s;
+            margin: 10px 0;
         }
         button:hover {
             background-color: #333;
@@ -66,45 +78,41 @@
             button:hover {
                 background-color: #ccc;
             }
+            pre {
+                background-color: #333;
+            }
         }
         @media (max-width: 600px) {
             .card {
                 width: 90%;
-                height: auto;
             }
-            .codename {
+            h1 {
                 font-size: 1.5em;
             }
-            .buttons {
-                grid-template-columns: 1fr;
+            h2 {
+                font-size: 1.2em;
             }
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div id="codename" class="codename"></div>
-        <div class="buttons">
-            <button id="copyNormal">Copy as verb noun</button>
-            <button id="copyDash">Copy as verb-noun</button>
-            <button id="copyUpper">Copy as VERB_NOUN</button>
-            <button id="copyLower">Copy as verb_noun</button>
-            <button id="copyCamel">Copy as verbNoun</button>
-            <button id="copyPascal">Copy as VerbNoun</button>
-        </div>
+        <h1>Install CodeNamr CLI</h1>
+        <p>CodeNamr is a tool for generating memorable code names in various formats.</p>
+        <h2>Installation</h2>
+        <p>Run this command in your terminal:</p>
+        <pre><code>curl -fsSL https://codenamr.vercel.app/install.sh | bash</code></pre>
+        <button id="copyInstall">Copy Install Command</button>
+        <h2>Update</h2>
+        <p>To update to the latest version:</p>
+        <pre><code>curl -fsSL https://codenamr.vercel.app/update.sh | bash</code></pre>
+        <button id="copyUpdate">Copy Update Command</button>
+        <h2>Uninstall</h2>
+        <p>To uninstall:</p>
+        <pre><code>curl -fsSL https://codenamr.vercel.app/uninstall.sh | bash</code></pre>
+        <button id="copyUninstall">Copy Uninstall Command</button>
     </div>
     <script>
-        const verbs = ['searching', 'talking', 'walking', 'eating', 'running', 'sleeping', 'dancing', 'reading', 'writing', 'swimming', 'jumping', 'singing', 'cooking', 'driving', 'painting', 'playing', 'watching', 'listening', 'thinking', 'building', 'flying', 'laughing', 'crying', 'hugging', 'kissing', 'fighting', 'winning', 'losing', 'growing', 'shrinking', 'breathing', 'climbing', 'drawing', 'exploring', 'fishing', 'gardening', 'hiking', 'inventing', 'jogging', 'knitting', 'learning', 'meditating', 'navigating', 'observing', 'photographing', 'questioning', 'racing', 'sailing', 'teaching', 'understanding', 'vacationing', 'whispering', 'x-raying', 'yawning', 'zooming', 'admiring', 'baking', 'chasing', 'dreaming', 'enjoying', 'forgiving', 'gathering', 'hoping', 'ignoring', 'joking', 'kicking', 'loving', 'moving', 'noticing', 'opening', 'praying', 'quitting', 'resting', 'smiling', 'traveling', 'unlocking', 'viewing', 'waving', 'xylophoning', 'yearning', 'zipping', 'acting', 'bathing', 'cleaning', 'digging', 'editing', 'feeding', 'grilling', 'hunting', 'investing', 'juggling', 'kissing', 'lifting', 'mixing', 'napping', 'organizing', 'picking', 'quarreling', 'riding', 'shopping', 'typing', 'unwinding', 'visiting', 'washing', 'xeroing', 'yodeling', 'zapping'];
-        const nouns = ['laptop', 'bathroom', 'window', 'banana', 'phone', 'kitchen', 'book', 'car', 'tree', 'mirror', 'house', 'door', 'table', 'chair', 'computer', 'garden', 'river', 'mountain', 'city', 'street', 'beach', 'ocean', 'forest', 'desert', 'bridge', 'tower', 'castle', 'ship', 'plane', 'train', 'apple', 'bicycle', 'cloud', 'doorway', 'elephant', 'flower', 'guitar', 'hat', 'island', 'jacket', 'kite', 'lamp', 'moon', 'notebook', 'ocean', 'piano', 'quilt', 'rose', 'sun', 'turtle', 'umbrella', 'violin', 'whale', 'xylophone', 'yacht', 'zebra', 'airplane', 'balloon', 'camera', 'diamond', 'engine', 'fountain', 'globe', 'helmet', 'iceberg', 'jungle', 'key', 'lantern', 'museum', 'nest', 'orchard', 'pyramid', 'quarry', 'rainbow', 'statue', 'temple', 'universe', 'volcano', 'waterfall', 'xerox', 'yogurt', 'zoo', 'anchor', 'butterfly', 'candle', 'drum', 'envelope', 'feather', 'glove', 'honey', 'ink', 'jewel', 'kettle', 'leaf', 'map', 'needle', 'owl', 'pearl', 'queen', 'ring', 'sword', 'throne', 'unicorn', 'vase', 'wagon', 'x-ray', 'yarn', 'zodiac'];
-
-        let currentCodename = '';
-
-        function generateCodename() {
-            const verb = verbs[Math.floor(Math.random() * verbs.length)];
-            const noun = nouns[Math.floor(Math.random() * nouns.length)];
-            return verb + ' ' + noun;
-        }
-
         function copyToClipboard(text, button) {
             const originalText = button.textContent;
             navigator.clipboard.writeText(text).then(() => {
@@ -117,23 +125,15 @@
             });
         }
 
-        currentCodename = generateCodename();
-        document.getElementById('codename').textContent = currentCodename;
-
-        // Update button texts to show "Copy as" followed by the exact words they'll copy
-        document.getElementById('copyNormal').textContent = 'Copy as ' + currentCodename;
-        document.getElementById('copyDash').textContent = 'Copy as ' + currentCodename.replace(' ', '-');
-        document.getElementById('copyUpper').textContent = 'Copy as ' + currentCodename.toUpperCase().replace(' ', '_');
-        document.getElementById('copyLower').textContent = 'Copy as ' + currentCodename.replace(' ', '_');
-        document.getElementById('copyCamel').textContent = 'Copy as ' + (currentCodename.split(' ')[0] + currentCodename.split(' ')[1].charAt(0).toUpperCase() + currentCodename.split(' ')[1].slice(1));
-        document.getElementById('copyPascal').textContent = 'Copy as ' + (currentCodename.split(' ')[0].charAt(0).toUpperCase() + currentCodename.split(' ')[0].slice(1) + currentCodename.split(' ')[1].charAt(0).toUpperCase() + currentCodename.split(' ')[1].slice(1));
-
-        document.getElementById('copyNormal').addEventListener('click', function() { copyToClipboard(currentCodename, this); });
-        document.getElementById('copyDash').addEventListener('click', function() { copyToClipboard(currentCodename.replace(' ', '-'), this); });
-        document.getElementById('copyUpper').addEventListener('click', function() { copyToClipboard(currentCodename.toUpperCase().replace(' ', '_'), this); });
-        document.getElementById('copyLower').addEventListener('click', function() { copyToClipboard(currentCodename.replace(' ', '_'), this); });
-        document.getElementById('copyCamel').addEventListener('click', function() { copyToClipboard(currentCodename.split(' ')[0] + currentCodename.split(' ')[1].charAt(0).toUpperCase() + currentCodename.split(' ')[1].slice(1), this); });
-        document.getElementById('copyPascal').addEventListener('click', function() { copyToClipboard(currentCodename.split(' ')[0].charAt(0).toUpperCase() + currentCodename.split(' ')[0].slice(1) + currentCodename.split(' ')[1].charAt(0).toUpperCase() + currentCodename.split(' ')[1].slice(1), this); });
+        document.getElementById('copyInstall').addEventListener('click', function() {
+            copyToClipboard('curl -fsSL https://codenamr.vercel.app/install.sh | bash', this);
+        });
+        document.getElementById('copyUpdate').addEventListener('click', function() {
+            copyToClipboard('curl -fsSL https://codenamr.vercel.app/update.sh | bash', this);
+        });
+        document.getElementById('copyUninstall').addEventListener('click', function() {
+            copyToClipboard('curl -fsSL https://codenamr.vercel.app/uninstall.sh | bash', this);
+        });
     </script>
 </body>
 </html>
