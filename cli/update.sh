@@ -7,7 +7,7 @@ echo "Starting CodeNamr CLI update..."
 
 # Pull the latest changes from the git repository
 echo "Pulling latest changes from git..."
-git pull
+cd .. && git pull && cd cli
 
 # Run the installation script
 echo "Running the installation script..."
