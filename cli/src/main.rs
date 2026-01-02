@@ -6,9 +6,9 @@ use std::fmt;
 struct Args {
     #[arg(short, long, help = "Output format", default_value_t = Format::Normal, value_parser = clap::value_parser!(Format))]
     format: Format,
-    #[arg(short, long, help = "Number of names to generate", default_value_t = 1)]
+    #[arg(short = 'n', long, help = "Number of names to generate", default_value_t = 1)]
     count: u32,
-    #[arg(long, help = "Copy first name to clipboard")]
+    #[arg(short, long, help = "Copy first name to clipboard")]
     copy: bool,
 }
 
@@ -59,10 +59,7 @@ fn main() {
         names.push(output);
     }
 
-    for (i, name) in names.iter().enumerate() {
-        if args.count > 1 {
-            print!("{}. ", i + 1);
-        }
+    for name in &names {
         println!("{}", name);
     }
 
