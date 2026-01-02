@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 fastrand = "2.0"
 clap = { version = "4.0", features = ["derive"] }
+arboard = "3.0"
 
 [profile.release]
 lto = true
