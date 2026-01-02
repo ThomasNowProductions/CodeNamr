@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "Starting CodeNamr CLI installation..."
+echo "Starting Codenamr CLI installation..."
 
 # Check for Rust installation
 if ! command -v cargo &> /dev/null
@@ -21,14 +21,14 @@ TEMP_DIR=$(mktemp -d)
 cd "$TEMP_DIR"
 
 # Clone the repository
-echo "Cloning CodeNamr repository..."
-git clone https://github.com/ThomasNowProductions/CodeNamr.git
+echo "Cloning Codenamr repository..."
+git clone https://github.com/ThomasNowProductions/Codenamr.git
 
 # Navigate to the CLI directory
-cd CodeNamr/cli
+cd Codenamr/cli
 
 # Build the CLI in release mode
-echo "Building CodeNamr CLI in release mode..."
+echo "Building Codenamr CLI in release mode..."
 cargo build --release
 
 # Move the executable to /usr/local/bin
@@ -39,5 +39,5 @@ sudo mv target/release/codenamr-cli /usr/local/bin/codenamr
 cd /
 rm -rf "$TEMP_DIR"
 
-echo "CodeNamr CLI installed successfully! You can now run 'codenamr' from anywhere."
+echo "Codenamr CLI installed successfully! You can now run 'codenamr' from anywhere."
 echo "Try: codenamr --help"

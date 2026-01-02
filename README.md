@@ -1,10 +1,10 @@
-# CodeNamr
+# Codenamr
 
-CodeNamr is a tool for generating memorable code names in various formats.
+Codenamr is a tool for generating memorable code names in various formats.
 
 ## Installation
 
-To install the CodeNamr CLI, run the following command:
+To install the Codenamr CLI, run the following command:
 
 ```bash
 curl -fsSL https://codenamr.vercel.app/install.sh | bash
@@ -18,7 +18,7 @@ This script will:
 
 ## Update
 
-To update the CodeNamr CLI to the latest version:
+To update the Codenamr CLI to the latest version:
 
 ```bash
 curl -fsSL https://codenamr.vercel.app/update.sh | bash
@@ -28,7 +28,7 @@ This script will pull the latest changes, rebuild, and reinstall the CLI.
 
 ## Uninstall
 
-To uninstall the CodeNamr CLI:
+To uninstall the Codenamr CLI:
 
 ```bash
 curl -fsSL https://codenamr.vercel.app/uninstall.sh | bash

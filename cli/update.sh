@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "Starting CodeNamr CLI update..."
+echo "Starting Codenamr CLI update..."
 
 # Pull the latest changes from the git repository
 echo "Pulling latest changes from git..."
@@ -13,4 +13,4 @@ cd .. && git pull && cd cli
 echo "Running the installation script..."
 ./install.sh
 
-echo "CodeNamr CLI updated successfully!"
+echo "Codenamr CLI updated successfully!"
