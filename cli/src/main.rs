@@ -16,6 +16,8 @@ struct Args {
     prefix: Option<String>,
     #[arg(short = 'u', long, help = "Suffix to add to each name")]
     suffix: Option<String>,
+    #[arg(long, help = "Show memorability scores")]
+    score: bool,
 }
 
 const VERBS: &[&str] = &[
@@ -155,10 +157,69 @@ fn generate_and_print(args: &Args, handle: &mut impl Write) -> Option<String> {
             first_name = Some(name.clone());
         }
 
-        writeln!(handle, "{}", name).ok();
+        if args.score {
+            let score = calculate_memorability_score(&name);
+            writeln!(handle, "{} (score: {:.1})", name, score).ok();
+        } else {
+            writeln!(handle, "{}", name).ok();
+        }
     }
 
     first_name
+}
+
+fn calculate_memorability_score(name: &str) -> f64 {
+    let cleaned = name.replace(['_', '-'], " ");
+    let clean_name = cleaned.trim();
+    let words: Vec<&str> = clean_name.split_whitespace().collect();
+    
+    let mut score = 50.0;
+    
+    // Length penalty/bonus
+    let length = clean_name.len();
+    if length <= 15 {
+        score += 10.0;
+    } else if length > 30 {
+        score -= 10.0;
+    }
+    
+    // Word count bonus
+    match words.len() {
+        2 => score += 15.0,
+        3 => score += 10.0,
+        1 => score -= 5.0,
+        _ => score -= 5.0,
+    }
+    
+    // Phonetic simplicity bonus
+    let simple_phonetics = ["a", "e", "i", "o", "u", "k", "p", "t", "m", "n", "l", "r"];
+    let simple_count = clean_name.chars().filter(|c| simple_phonetics.contains(&c.to_string().as_str())).count();
+    let phonetic_ratio = simple_count as f64 / clean_name.len() as f64;
+    score += phonetic_ratio * 20.0;
+    
+    // Repetition penalty
+    let mut char_counts = std::collections::HashMap::new();
+    for c in clean_name.chars() {
+        *char_counts.entry(c).or_insert(0) += 1;
+    }
+    let max_repetition = char_counts.values().max().unwrap_or(&1);
+    if *max_repetition > 3 {
+        score -= 5.0;
+    }
+    
+    // Common words bonus
+    let common_words = ["app", "run", "go", "do", "make", "get", "set", "new", "old", "big", "small"];
+    let common_count = words.iter().filter(|w| common_words.contains(w)).count() as f64;
+    score += common_count * 5.0;
+    
+    // Alliteration bonus
+    if words.len() >= 2 {
+        let first_chars: Vec<char> = words.iter().filter_map(|w| w.chars().next()).collect();
+        let alliterative_count = first_chars.windows(2).filter(|w| w[0] == w[1]).count();
+        score += (alliterative_count as f64) * 8.0;
+    }
+    
+    score.max(0.0).min(100.0)
 }
 
 fn capitalize(s: &str) -> String {
