@@ -19,6 +19,8 @@ struct Args {
     score: bool,
 }
 
+const MAX_COUNT: u32 = 1_000_000;
+
 const VERBS: &[&str] = &[
     "searching", "talking", "walking", "eating", "running", "sleeping", "dancing", "reading",
     "writing", "swimming", "jumping", "singing", "cooking", "driving", "painting", "playing",
@@ -72,6 +74,11 @@ const NOUNS: &[&str] = &[
 fn main() {
     let args = Args::parse();
 
+    if args.count > MAX_COUNT {
+        eprintln!("Error: count cannot exceed {}", MAX_COUNT);
+        std::process::exit(1);
+    }
+
     if let Some(seed) = args.seed {
         fastrand::seed(seed);
     }
@@ -118,10 +125,11 @@ fn generate_and_print(args: &Args, handle: &mut impl std::io::Write) -> Vec<Stri
     let uppercase_suffix = args.suffix.as_ref().map(|s| s.to_uppercase());
 
     let mut buffer = String::with_capacity(256);
+    let buffer_size = (args.count as usize).min(1_000_000) * 30;
     let mut output_buffer = if args.copy || args.score {
         String::new()
     } else {
-        String::with_capacity(args.count as usize * 30)
+        String::with_capacity(buffer_size)
     };
 
     for _ in 0..args.count {
