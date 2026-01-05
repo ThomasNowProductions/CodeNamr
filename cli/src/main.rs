@@ -79,27 +79,35 @@ fn main() {
 
     let stdout = std::io::stdout();
     let mut handle = stdout.lock();
-    let first_name = if args.count > 0 {
+    let generated_names = if args.count > 0 {
         generate_and_print(&args, &mut handle)
     } else {
-        None
+        Vec::new()
     };
 
     if args.copy {
-        if let Some(name) = first_name {
+        if !generated_names.is_empty() {
             if let Ok(mut clipboard) = arboard::Clipboard::new() {
-                if clipboard.set_text(&name).is_ok() {
-                    eprintln!("\nCopied to clipboard");
+                let text_to_copy = if generated_names.len() == 1 {
+                    generated_names[0].clone()
+                } else {
+                    generated_names.join("\n")
+                };
+                
+                if clipboard.set_text(&text_to_copy).is_ok() {
+                    let count = generated_names.len();
+                    let item = if count == 1 { "item" } else { "items" };
+                    eprintln!("\nCopied {} {} to clipboard", count, item);
                 }
             }
         }
     }
 }
 
-fn generate_and_print(args: &Args, handle: &mut impl Write) -> Option<String> {
-    let mut first_name = None;
+fn generate_and_print(args: &Args, handle: &mut impl Write) -> Vec<String> {
+    let mut generated_names = Vec::new();
 
-    for i in 0..args.count {
+    for _ in 0..args.count {
         let verb = fastrand::choice(VERBS).copied().unwrap_or("running");
         let noun = fastrand::choice(NOUNS).copied().unwrap_or("app");
 
@@ -153,9 +161,7 @@ fn generate_and_print(args: &Args, handle: &mut impl Write) -> Option<String> {
             }
         };
 
-        if i == 0 {
-            first_name = Some(name.clone());
-        }
+        generated_names.push(name.clone());
 
         if args.score {
             let score = calculate_memorability_score(&name);
@@ -165,7 +171,7 @@ fn generate_and_print(args: &Args, handle: &mut impl Write) -> Option<String> {
         }
     }
 
-    first_name
+    generated_names
 }
 
 fn calculate_memorability_score(name: &str) -> f64 {
