@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status.
-set -e
+set -euo pipefail
+trap 'rm -rf "$TEMP_DIR"' EXIT
 
 echo "Starting Codenamr CLI installation..."
 
-# Check for Rust installation
+command -v sudo >/dev/null || { echo "sudo is required for installation"; exit 1; }
+
 if ! command -v cargo &> /dev/null
 then
     echo "Rust (cargo) is not installed. Please install Rust by running:"
@@ -16,28 +17,29 @@ fi
 
 echo "Rust is installed. Proceeding with build."
 
-# Create a temporary directory for cloning
 TEMP_DIR=$(mktemp -d)
-cd "$TEMP_DIR"
+cd "$TEMP_DIR" || exit
 
-# Clone the repository
 echo "Cloning Codenamr repository..."
 git clone https://github.com/ThomasNowProductions/Codenamr.git
 
-# Navigate to the CLI directory
-cd Codenamr/cli
+cd Codenamr/cli || exit
 
-# Build the CLI in release mode
 echo "Building Codenamr CLI in release mode..."
 cargo build --release
 
-# Move the executable to /usr/local/bin
+if [ ! -f "target/release/codenamr-cli" ]; then
+    echo "Build failed: executable not found"
+    exit 1
+fi
+
+if [ -f "/usr/local/bin/codenamr" ]; then
+    echo "Backing up existing codenamr..."
+    sudo cp /usr/local/bin/codenamr /usr/local/bin/codenamr.backup
+fi
+
 echo "Installing codenamr to /usr/local/bin..."
 sudo mv target/release/codenamr-cli /usr/local/bin/codenamr
-
-# Clean up temporary directory
-cd /
-rm -rf "$TEMP_DIR"
 
 echo "Codenamr CLI installed successfully! You can now run 'codenamr' from anywhere."
 echo "Try: codenamr --help"
