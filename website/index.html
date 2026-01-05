@@ -5,135 +5,251 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codenamr CLI Installation</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fragment+Mono:wght@400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0f0f0f;
+            --text: #f0f0f0;
+            --accent: #ff3c00;
+            --accent-dim: rgba(255, 60, 0, 0.1);
+            --border: #222;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Fragment Mono", monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: white;
-            color: black;
+            padding: 48px;
         }
-        .card {
-            text-align: center;
-            width: 600px;
-            padding: 40px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
         }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            margin-bottom: 48px;
+        }
+
         h1 {
-            font-size: 2em;
-            font-weight: bold;
-            margin: 20px 0;
+            font-size: clamp(48px, 10vw, 96px);
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
         }
+
+        h1 span {
+            display: block;
+        }
+
+        h1 span:first-child {
+            animation-delay: 0.2s;
+        }
+
+        h1 span:last-child {
+            animation-delay: 0.4s;
+            color: var(--accent);
+        }
+
+        .description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.8s ease 0.6s backwards;
+        }
+
+        .back-link {
+            display: inline-block;
+            font-size: 14px;
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            animation: fadeInUp 0.8s ease 0.8s backwards;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        .card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .card:nth-child(2) { animation-delay: 1.0s; }
+        .card:nth-child(3) { animation-delay: 1.1s; }
+        .card:nth-child(4) { animation-delay: 1.2s; }
+
+        .card:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
         h2 {
-            font-size: 1.5em;
-            margin: 20px 0 10px 0;
+            font-size: 14px;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-weight: 400;
         }
-        p {
-            margin: 10px 0;
+
+        .card p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
         }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: left;
+
+        .command-block {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: #1a1a1a;
+            padding: 16px 20px;
+            border-radius: 4px;
             overflow-x: auto;
         }
+
         code {
             font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--text);
+            white-space: nowrap;
         }
+
         button {
-            padding: 12px 20px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9em;
-            background-color: black;
-            color: white;
-            transition: background-color 0.3s;
-            margin: 10px 0;
+            font-size: 12px;
+            font-family: inherit;
+            background: var(--text);
+            color: var(--bg);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
+
         button:hover {
-            background-color: #333;
+            background: var(--accent);
         }
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: black;
-                color: white;
-            }
-            .card {
-                background-color: black;
-                box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-            }
-            button {
-                background-color: white;
-                color: black;
-            }
-            button:hover {
-                background-color: #ccc;
-            }
-            pre {
-                background-color: #333;
-            }
+
+        button.copied {
+            background: #22c55e;
+            color: white;
         }
+
+        .footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            gap: 24px;
+            animation: fadeInUp 0.8s ease 1.4s backwards;
+        }
+
         @media (max-width: 600px) {
-            .card {
-                width: 90%;
+            body {
+                padding: 24px;
             }
-            h1 {
-                font-size: 1.5em;
+
+            .command-block {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
             }
-            h2 {
-                font-size: 1.2em;
+
+            button {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Install Codenamr CLI</h1>
-        <p>Codenamr is a tool for generating memorable code names in various formats.</p>
-        <h2>Installation</h2>
-        <p>Run this command in your terminal:</p>
-        <pre><code>curl -fsSL https://codenamr.vercel.app/install.sh | bash</code></pre>
-        <button id="copyInstall">Copy Install Command</button>
-        <h2>Update</h2>
-        <p>To update to the latest version:</p>
-        <pre><code>curl -fsSL https://codenamr.vercel.app/update.sh | bash</code></pre>
-        <button id="copyUpdate">Copy Update Command</button>
-        <h2>Uninstall</h2>
-        <p>To uninstall:</p>
-        <pre><code>curl -fsSL https://codenamr.vercel.app/uninstall.sh | bash</code></pre>
-        <button id="copyUninstall">Copy Uninstall Command</button>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>Codenamr</span>
+                <span>CLI</span>
+            </h1>
+            <p class="description">Codenamr is a tool for generating memorable code names in various formats.</p>
+            <a href="/" class="back-link">← Back to Portfolio</a>
+        </div>
+
+        <div class="card">
+            <h2>Install</h2>
+            <p>Run this command in your terminal:</p>
+            <div class="command-block">
+                <code>curl -fsSL https://codenamr.vercel.app/install.sh | bash</code>
+                <button onclick="copyCommand(this, 'curl -fsSL https://codenamr.vercel.app/install.sh | bash')">Copy</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Update</h2>
+            <p>To update to the latest version:</p>
+            <div class="command-block">
+                <code>curl -fsSL https://codenamr.vercel.app/update.sh | bash</code>
+                <button onclick="copyCommand(this, 'curl -fsSL https://codenamr.vercel.app/update.sh | bash')">Copy</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Uninstall</h2>
+            <p>To uninstall:</p>
+            <div class="command-block">
+                <code>curl -fsSL https://codenamr.vercel.app/uninstall.sh | bash</code>
+                <button onclick="copyCommand(this, 'curl -fsSL https://codenamr.vercel.app/uninstall.sh | bash')">Copy</button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <span>© 2026</span>
+            <span>The Netherlands</span>
+        </footer>
     </div>
+
     <script>
-        function copyToClipboard(text, button) {
-            const originalText = button.textContent;
+        function copyCommand(button, text) {
             navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
                 button.textContent = 'Copied!';
+                button.classList.add('copied');
                 setTimeout(() => {
                     button.textContent = originalText;
+                    button.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
-                console.error('Failed to copy: ', err);
+                console.error('Failed to copy:', err);
             });
         }
-
-        document.getElementById('copyInstall').addEventListener('click', function() {
-            copyToClipboard('curl -fsSL https://codenamr.vercel.app/install.sh | bash', this);
-        });
-        document.getElementById('copyUpdate').addEventListener('click', function() {
-            copyToClipboard('curl -fsSL https://codenamr.vercel.app/update.sh | bash', this);
-        });
-        document.getElementById('copyUninstall').addEventListener('click', function() {
-            copyToClipboard('curl -fsSL https://codenamr.vercel.app/uninstall.sh | bash', this);
-        });
     </script>
 </body>
 </html>
