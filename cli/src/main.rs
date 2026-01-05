@@ -4,7 +4,7 @@ use std::io::Write;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, help = "Output format", default_value = "normal")]
+    #[arg(short, long, help = "Output format (kebab, snake, constant, camel, pascal, normal)", default_value = "normal")]
     format: String,
     #[arg(short = 'n', long, help = "Number of names to generate", default_value_t = 1)]
     count: u32,
