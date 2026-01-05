@@ -1,5 +1,4 @@
 use clap::Parser;
-use std::io::Write;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -104,74 +103,138 @@ fn main() {
     }
 }
 
-fn generate_and_print(args: &Args, handle: &mut impl Write) -> Vec<String> {
-    let mut generated_names = Vec::new();
+fn generate_and_print(args: &Args, handle: &mut impl std::io::Write) -> Vec<String> {
+    let mut generated_names = if args.copy {
+        Vec::with_capacity(args.count as usize)
+    } else {
+        Vec::new()
+    };
+
+    let format_lower = args.format.to_lowercase();
+    let format_str = format_lower.as_str();
+    let prefix = args.prefix.as_deref().unwrap_or("");
+    let suffix = args.suffix.as_deref().unwrap_or("");
+    let uppercase_prefix = args.prefix.as_ref().map(|p| p.to_uppercase());
+    let uppercase_suffix = args.suffix.as_ref().map(|s| s.to_uppercase());
+
+    let mut buffer = String::with_capacity(256);
+    let mut output_buffer = if args.copy || args.score {
+        String::new()
+    } else {
+        String::with_capacity(args.count as usize * 30)
+    };
 
     for _ in 0..args.count {
-        let verb = fastrand::choice(VERBS).copied().unwrap_or("running");
-        let noun = fastrand::choice(NOUNS).copied().unwrap_or("app");
+        buffer.clear();
+        let verb = VERBS[fastrand::usize(..VERBS.len())];
+        let noun = NOUNS[fastrand::usize(..NOUNS.len())];
 
-        let name = match args.format.to_lowercase().as_str() {
-            "kebab" => format!("{}-{}-{}{}",
-                args.prefix.as_deref().unwrap_or(""),
-                verb,
-                noun,
-                args.suffix.as_deref().map(|s| format!("-{}", s)).unwrap_or_default()
-            ).trim_matches('-').to_string(),
-            "snake" => {
-                let prefix_part = args.prefix.as_deref()
-                    .map(|p| format!("{}_", p))
-                    .unwrap_or_default();
-                format!("{}{}_{}{}",
-                    prefix_part,
-                    verb,
-                    noun,
-                    args.suffix.as_deref().map(|s| format!("_{}", s)).unwrap_or_default()
-                ).replace("__", "_")
+        let name = match format_str {
+            "kebab" => {
+                if !prefix.is_empty() {
+                    buffer.push_str(prefix);
+                    buffer.push('-');
+                }
+                buffer.push_str(verb);
+                buffer.push('-');
+                buffer.push_str(noun);
+                if !suffix.is_empty() {
+                    buffer.push('-');
+                    buffer.push_str(suffix);
+                }
+                buffer.trim_matches('-').to_string()
             },
-            "constant" => format!("{}{}_{}{}",
-                args.prefix.as_ref().map(|p| p.to_uppercase() + "_").unwrap_or_default(),
-                verb.to_uppercase(),
-                noun.to_uppercase(),
-                args.suffix.as_ref().map(|s| "_".to_string() + &s.to_uppercase()).unwrap_or_default(),
-            ),
-            "camel" => format!("{}{}{}{}",
-                args.prefix.as_deref().unwrap_or(""),
-                verb,
-                capitalize(noun),
-                capitalize(args.suffix.as_deref().unwrap_or("")),
-            ),
-            "pascal" => format!("{}{}{}{}",
-                capitalize(args.prefix.as_deref().unwrap_or("")),
-                capitalize(verb),
-                capitalize(noun),
-                capitalize(args.suffix.as_deref().unwrap_or("")),
-            ),
+            "snake" => {
+                if !prefix.is_empty() {
+                    buffer.push_str(prefix);
+                    buffer.push('_');
+                }
+                buffer.push_str(verb);
+                buffer.push('_');
+                buffer.push_str(noun);
+                if !suffix.is_empty() {
+                    buffer.push('_');
+                    buffer.push_str(suffix);
+                }
+                buffer.replace("__", "_")
+            },
+            "constant" => {
+                if let Some(ref p) = uppercase_prefix {
+                    buffer.push_str(p);
+                    buffer.push('_');
+                }
+                buffer.push_str(&verb.to_uppercase());
+                buffer.push('_');
+                buffer.push_str(&noun.to_uppercase());
+                if let Some(ref s) = uppercase_suffix {
+                    buffer.push('_');
+                    buffer.push_str(s);
+                }
+                buffer.clone()
+            },
+            "camel" => {
+                buffer.push_str(prefix);
+                buffer.push_str(verb);
+                capitalize_to(&noun, &mut buffer);
+                if !suffix.is_empty() {
+                    capitalize_to(suffix, &mut buffer);
+                }
+                buffer.clone()
+            },
+            "pascal" => {
+                capitalize_to(prefix, &mut buffer);
+                capitalize_to(verb, &mut buffer);
+                capitalize_to(noun, &mut buffer);
+                if !suffix.is_empty() {
+                    capitalize_to(suffix, &mut buffer);
+                }
+                buffer.clone()
+            },
             _ => {
-                let mut parts = vec![];
-                if let Some(ref prefix) = args.prefix {
-                    parts.push(prefix.clone());
+                if !prefix.is_empty() {
+                    buffer.push_str(prefix);
+                    buffer.push(' ');
                 }
-                parts.push(verb.to_string());
-                if let Some(ref suffix) = args.suffix {
-                    parts.push(suffix.clone());
+                buffer.push_str(verb);
+                buffer.push(' ');
+                if !suffix.is_empty() {
+                    buffer.push_str(suffix);
+                    buffer.push(' ');
                 }
-                parts.push(noun.to_string());
-                parts.join(" ").replace("  ", " ")
+                buffer.push_str(noun);
+                buffer.replace("  ", " ")
             }
         };
 
-        generated_names.push(name.clone());
+        if args.copy {
+            generated_names.push(name.clone());
+        }
 
         if args.score {
             let score = calculate_memorability_score(&name);
             writeln!(handle, "{} (score: {:.1})", name, score).ok();
+        } else if args.copy {
+            output_buffer.push_str(&name);
+            output_buffer.push('\n');
         } else {
-            writeln!(handle, "{}", name).ok();
+            output_buffer.push_str(&name);
+            output_buffer.push('\n');
         }
     }
 
+    if !output_buffer.is_empty() {
+        handle.write_all(output_buffer.as_bytes()).ok();
+    }
+
     generated_names
+}
+
+fn capitalize_to(s: &str, buffer: &mut String) {
+    let mut chars = s.chars();
+    if let Some(first) = chars.next() {
+        buffer.extend(first.to_uppercase());
+        buffer.extend(chars);
+    }
 }
 
 fn calculate_memorability_score(name: &str) -> f64 {
@@ -228,10 +291,4 @@ fn calculate_memorability_score(name: &str) -> f64 {
     score.max(0.0).min(100.0)
 }
 
-fn capitalize(s: &str) -> String {
-    let mut chars = s.chars();
-    match chars.next() {
-        None => String::new(),
-        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
-    }
-}
+
